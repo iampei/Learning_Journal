@@ -39,9 +39,10 @@ def create(request):
 @view_config(route_name='action', match_param='action=edit', renderer='templates/edit.jinja2')
 def update(request):
     #import pdb; pdb.set_trace()
-    this_id = int(request.matchdict.get('id', -1))
+    this_id = request.matchdict.get('id', -1)
     print('this_id', this_id, type(this_id))
     entry = Entry.by_id(this_id)
+    #entry = Entry.by_id(2)
     #print(this_id)
     if not entry:
         print('fail!')
@@ -49,7 +50,7 @@ def update(request):
     form = EntryUpdateForm(request.POST, entry)
     if request.method == 'POST' and form.validate():
         form.populate_obj(entry)
-        #DBSession.commit()
+        DBSession.commit()
         return HTTPFound(location=request.route_url('entry', id = entry.id))
     return {'form': form, 'action': request.matchdict.get('action')}
     #return 'edit page test'
