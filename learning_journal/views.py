@@ -10,7 +10,7 @@ from .models import (
     Entry,
     )
 from pyramid.httpexceptions import HTTPFound
-from .forms import EntryCreateForm
+from .forms import (EntryCreateForm, EntryUpdateForm)
 
 
 @view_config(route_name='home', renderer='templates/list.jinja2')
@@ -36,9 +36,23 @@ def create(request):
         return HTTPFound(location=request.route_url('home'))
     return {'form': form, 'action': request.matchdict.get('action')}
 
-@view_config(route_name='action', match_param='action=edit', renderer='string')
+@view_config(route_name='action', match_param='action=edit', renderer='templates/edit.jinja2')
 def update(request):
-    return 'edit page'
+    #import pdb; pdb.set_trace()
+    this_id = int(request.matchdict.get('id', -1))
+    print('this_id', this_id, type(this_id))
+    entry = Entry.by_id(this_id)
+    #print(this_id)
+    if not entry:
+        print('fail!')
+        return HTTPNotFound()
+    form = EntryUpdateForm(request.POST, entry)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(entry)
+        #DBSession.commit()
+        return HTTPFound(location=request.route_url('entry', id = entry.id))
+    return {'form': form, 'action': request.matchdict.get('action')}
+    #return 'edit page test'
 
 
 

@@ -11,3 +11,13 @@ class EntryCreateForm(Form):
         'Entry body',
         [validators.Length(min=1)],
         filters=[strip_filter])
+
+class EntryUpdateForm(Form):
+    title = TextField(
+        'Edit title',
+        [validators.Length(min=1, max=255)],
+        filters=[strip_filter])
+    body = TextAreaField(
+        'Edit body',
+        [validators.Length(min=1)],
+        filters=[strip_filter])
