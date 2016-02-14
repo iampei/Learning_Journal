@@ -11,6 +11,7 @@ from .models import (
     )
 from pyramid.httpexceptions import HTTPFound
 from .forms import (EntryCreateForm, EntryUpdateForm)
+import transaction
 
 
 @view_config(route_name='home', renderer='templates/list.jinja2')
@@ -43,14 +44,13 @@ def update(request):
     print('this_id', this_id, type(this_id))
     entry = Entry.by_id(this_id)
     #entry = Entry.by_id(2)
-    #print(this_id)
     if not entry:
-        print('fail!')
         return HTTPNotFound()
     form = EntryUpdateForm(request.POST, entry)
     if request.method == 'POST' and form.validate():
         form.populate_obj(entry)
-        DBSession.commit()
+        #DBSession.commit()
+        #transaction.commit()
         return HTTPFound(location=request.route_url('entry', id = entry.id))
     return {'form': form, 'action': request.matchdict.get('action')}
     #return 'edit page test'
