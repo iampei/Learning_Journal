@@ -17,6 +17,8 @@ from ..models import (
     Base,
     )
 
+from learning_journal.models import password_context
+from learning_journal.models import User
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
@@ -36,5 +38,8 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = MyModel(name='one', value=1)
-        DBSession.add(model)
+        #model = MyModel(name='one', value=1)
+        #DBSession.add(model)
+        encrypted = password_context.encrypt('admin')
+        admin = User(name='admin', password=encrypted)
+        DBSession.add(admin)

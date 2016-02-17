@@ -17,9 +17,11 @@ from sqlalchemy.orm import (
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
+from passlib.context import CryptContext
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
+
 
 
 class MyModel(Base):
@@ -39,7 +41,6 @@ class Entry (Base):
     created = Column(DateTime, default=datetime.datetime.utcnow)
     edited = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-
     @classmethod
     def all (cls, session = None):
         if session is None:
@@ -57,9 +58,13 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Unicode(255), unique=True, nullable=False)
     password = Column(Unicode(255), nullable=False)
+    def verify_password(self, password):
+        return password_context.verify(password, self.password)
 
     @classmethod
     def by_name(cls, name):
         return DBSession.query(cls).filter(cls.name == name).first()
+
+password_context = CryptContext(schemes=['pbkdf2_sha512'])
 
 #Index('my_index', MyModel.name, unique=True, mysql_length=255)
