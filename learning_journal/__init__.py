@@ -7,7 +7,7 @@ from .models import (
     DBSession,
     Base,
     )
-
+import os
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
