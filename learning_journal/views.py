@@ -51,7 +51,7 @@ def update(request):
         form.populate_obj(entry)
         #DBSession.commit()
         #transaction.commit()
-        return HTTPFound(location=request.route_url('entry', id = entry.id))
+        return HTTPFound(location=request.route_url('detail', id = entry.id))
     return {'form': form, 'action': request.matchdict.get('action')}
     #return 'edit page test'
 
